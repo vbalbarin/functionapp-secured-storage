@@ -1,0 +1,101 @@
+
+locals {
+  subscription_id = var.subscription_id
+  location        = lower(var.location)
+
+  # subnet_names = {
+  #   # AzureFirewallSubnet           = "AzureFirewallSubnet"
+  #   # AzureFirewallManagementSubnet = "AzureFirewallManagementSubnet"
+  #   # AzureBastionSubnet            = "AzureBastionSubnet"
+  #   # DomainControllerSubnet        = "DomainControllerSubnet"
+  #   # ComputeSubnet                 = "ComputeSubnet"
+  #   FunctionAppSubnet             = "FuncAppSubnet"
+  #   PrivateEndpointSubnet         = "PESubnet"
+  # }
+
+  instance_formatted = format("%02d", var.instance)
+  naming_structure   = replace(replace(replace(replace(replace(replace(replace(replace(var.naming_convention, "{workloadName}", var.workload_name), "{environment}", var.environment), "{region}", local.az_region_abbreviations[var.location]), "{instance}", local.instance_formatted), "{org}", var.org), "--", "-"), "{unit}", var.unit), "--", "-")
+
+  storage_account_firewall_allowed_ip = length(var.remote_access_ip) > 0 ? [var.remote_access_ip] : [data.http.runner_ip[0].response_body]
+}
+
+
+locals {
+  az_region_abbreviations = {
+    australiacentral   = "acl"
+    australiacentral2  = "acl2"
+    australiaeast      = "ae"
+    australiasoutheast = "ase"
+    brazilsouth        = "brs"
+    brazilsoutheast    = "bse"
+    brazilus           = "bru"
+    canadacentral      = "cnc"
+    canadaeast         = "cne"
+    centralindia       = "inc"
+    centralus          = "cus"
+    centraluseuap      = "ccy"
+    eastasia           = "ea"
+    eastus             = "eus"
+    eastus2            = "eus2"
+    eastus2euap        = "ecy"
+    eastusstg          = "eastusstg"
+    francecentral      = "frc"
+    francesouth        = "frs"
+    germanynorth       = "gn"
+    germanywestcentral = "gwc"
+    israelcentral      = "ilc"
+    italynorth         = "itn"
+    japaneast          = "jpe"
+    japanwest          = "jpw"
+    jioindiacentral    = "jic"
+    jioindiawest       = "jiw"
+    koreacentral       = "krc"
+    koreasouth         = "krs"
+    mexicocentral      = "mxc"
+    newzealandnorth    = "nzn"
+    northcentralus     = "ncus"
+    northeurope        = "ne"
+    norwayeast         = "nwe"
+    norwaywest         = "nww"
+    polandcentral      = "plc"
+    qatarcentral       = "qac"
+    southafricanorth   = "san"
+    southafricawest    = "saw"
+    southcentralus     = "scus"
+    southcentralusstg  = "southcentralusstg"
+    southindia         = "ins"
+    southeastasia      = "sea"
+    spaincentral       = "esc"
+    swedencentral      = "sdc"
+    swedensouth        = "sds"
+    switzerlandnorth   = "szn"
+    switzerlandwest    = "szw"
+    uaecentral         = "uac"
+    uaenorth           = "uan"
+    uksouth            = "uks"
+    ukwest             = "ukw"
+    westcentralus      = "wcus"
+    westeurope         = "we"
+    westindia          = "inw"
+    westus             = "wus"
+    westus2            = "wus2"
+    westus3            = "wus3"
+    chinaeast          = "sha"
+    chinaeast2         = "sha2"
+    chinanorth         = "bjb"
+    chinanorth2        = "bjb2"
+    chinanorth3        = "bjb3"
+    germanycentral     = "gec"
+    germanynortheast   = "gne"
+    usdodcentral       = "udc"
+    usdodeast          = "ude"
+    usgovarizona       = "uga"
+    usgoviowa          = "ugi"
+    usgovtexas         = "ugt"
+    usgovvirginia      = "ugv"
+    usnateast          = "exe"
+    usnatwest          = "exw"
+    usseceast          = "rxe"
+    ussecwest          = "rxw"
+  }
+}
